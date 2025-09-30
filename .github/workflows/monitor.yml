@@ -1,0 +1,24 @@
+name: TRON USDT Monitor
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # every 5 minutes
+  workflow_dispatch:        # allows manual run from GitHub UI
+jobs:
+  run-monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install deps
+        run: pip install tronpy python-telegram-bot==13.15 requests
+      - name: Run monitor
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TRON_ADDRESS: ${{ secrets.TRON_ADDRESS }}
+          USDT_CONTRACT: ${{ secrets.USDT_CONTRACT }}
+          POLL_INTERVAL: ${{ secrets.POLL_INTERVAL }}
+        run: python monitor_tron_usdt.py
